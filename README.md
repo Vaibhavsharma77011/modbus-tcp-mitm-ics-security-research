@@ -249,8 +249,59 @@ This is why detection alone is insufficient. Network-layer controls — allowlis
 
 ---
 
+## Mitigations
+
+### Immediate
+
+- Firewall rules blocking Modbus ports 502/503 from any unauthorized source IP
+- Physical or logical OT/IT network separation (air gap, DMZ, or dedicated VLAN)
+- Monitor active Modbus connections with `netstat -an | grep 503` or Wireshark alerts
+
+### Short-term
+
+- IP allowlisting — only verified PLC addresses can reach Modbus devices at the network layer
+- Deploy an OT-aware IDS: [Claroty](https://claroty.com), [Dragos](https://www.dragos.com), or [Nozomi Networks](https://www.nozominetworks.com)
+- Evaluate [ModbusTLS](https://www.modbus.org) for encrypted, authenticated Modbus where firmware supports it
+
+### Long-term
+
+- Implement [Purdue Model](https://www.isa.org) / [IEC 62443](https://www.iec.ch) architecture for defense-in-depth
+- Migrate critical sensor loops to [OPC-UA](https://opcfoundation.org/about/opc-technologies/opc-ua/) where feasible — authentication and encryption are native to the specification
+- Regular OT penetration testing to validate segmentation and detection coverage
+- ML-based or statistical baseline monitoring for subtle sensor value drift
+
 ---
 
+## Key takeaways
+
+**Protocol age and protocol security are independent properties.**
+Modbus is widely deployed because it is reliable, deterministic, and simple to implement. None of those properties have anything to do with security. The 1979 design was correct for its environment. The mistake was extending it to IP networks without revisiting the threat model.
+
+**This demonstration requires no exploits.**
+No CVE, no buffer overflow, no zero-day. The proxy is ~80 lines of Python stdlib. It works because the protocol provides no mechanism to detect it — not because of any implementation flaw.
+
+**Application-layer detection cannot substitute for network-layer controls.**
+`defense.py` catches the `0xFF` spoofing variant because `0xFF` is out-of-spec. A more careful attacker stays within spec. Cryptographic integrity requires cryptographic controls — heuristics are a monitoring layer, not a security guarantee.
+
+**PLC logs are not a forensic source of truth.**
+The PLC records what it received — which is the spoofed value. Log entries during an active compromise look entirely normal. Forensic investigation of an ICS incident requires an independent network capture layer to compare transmitted data against logged data.
+
+---
+
+## Repository structure
+
+```
+modbus-tcp-mitm-ics-security-research/
+├── README.md                       ← This file
+├── defense.py                      ← Anomaly detection proxy (documented, runnable)
+├── LICENSE
+└── report/
+    └── vulnerability_report.pdf   ← Full technical write-up with CVSS breakdown
+```
+
+> The MITM proxy implementation is described and annotated in this README for educational analysis. The full runnable attack script is not published — the documented logic above is sufficient to understand the vulnerability class without providing a ready-to-deploy tool.
+
+---
 
 ## References
 
