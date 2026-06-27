@@ -1,6 +1,6 @@
-# Modbus TCP MITM — ICS Security Research
+# Evaluating Modbus TCP Security Through a Controlled ICS Man-in-the-Middle Lab
 
-**Vaibhav** · BTech Automation & Robotics (2026) · ICS/OT Security Research
+**Vaibhav** · BTech Automation & Robotics (2026) · ICS/OT Security
 
 ![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=flat-square&logo=python&logoColor=white)
 ![Kali Linux](https://img.shields.io/badge/Kali_Linux-2026.1-557C94?style=flat-square&logo=kalilinux&logoColor=white)
